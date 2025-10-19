@@ -1,6 +1,6 @@
 import aiohttp
 from typing import List
-from poll import Poll
+from Pollcord.poll import Poll
 
 class PollClient:
     BASE_URL = "https://discord.com/api/v10"
