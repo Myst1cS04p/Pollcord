@@ -1,6 +1,7 @@
 import aiohttp
 from typing import List
 from Pollcord.poll import Poll
+from Pollcord.pollcord_error import PollCreationError, PollNotFoundError, PollcordError
 
 class PollClient:
     BASE_URL = "https://discord.com/api/v10"
@@ -59,7 +60,7 @@ class PollClient:
         async with self.session.post(f"{self.BASE_URL}/channels/{channel_id}/polls", json=payload) as r:
             if r.status != 200 and r.status != 201:
                 text = await r.text()
-                raise Exception(f"Failed to create poll: {r.status} - {text}")
+                raise PollCreationError(f"Failed to create poll: {r.status} - {text}")
             data = await r.json()
 
         # Create and start a local Poll object
@@ -114,7 +115,7 @@ class PollClient:
         async with self.session.get(url) as r:
             if r.status != 200:
                 text = await r.text()
-                raise Exception(f"Failed to fetch poll users: {r.status} - {text}")
+                raise PollNotFoundError(text, poll=poll)
             data = await r.json()
             return data.get("users", [])
 
@@ -128,7 +129,7 @@ class PollClient:
         async with self.session.post(url) as r:
             if r.status != 200 and r.status != 204:
                 text = await r.text()
-                raise Exception(f"Failed to end poll: {r.status} - {text}")
+                raise PollcordError(f"Failed to end poll: {r.status} - {text}", poll=poll)
         poll.ended = True
         if poll.on_end:
             await poll._safe_callback()
