@@ -1,5 +1,5 @@
-from Pollcord.client import PollClient
-from Pollcord.poll import Poll
+from pollcord.client import PollClient
+from pollcord.poll import Poll
 import importlib.metadata
 
 

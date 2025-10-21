@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from Pollcord import Poll
+    from pollcord import Poll
 
 
 class PollcordError(Exception):

@@ -1,7 +1,7 @@
 import aiohttp
 from typing import List
-from Pollcord.poll import Poll
-from Pollcord.error import PollCreationError, PollNotFoundError, PollcordError
+from pollcord.poll import Poll
+from pollcord.error import PollCreationError, PollNotFoundError, PollcordError
 
 class PollClient:
     BASE_URL = "https://discord.com/api/v10"
