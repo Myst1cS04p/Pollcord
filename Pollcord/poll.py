@@ -40,6 +40,10 @@ class Poll:
         self.isMultiselect = isMultiselect
         self.ended = False
 
+
+    def __repr__(self):
+        return f"<Poll channel_id={self.channel_id} message_id={self.message_id} prompt={self.prompt!r} options={self.options} duration={self.duration} isMultiselect={self.isMultiselect} ended={self.ended}>"
+
     def start(self):
         """
         Starts the background task to end the poll after the specified duration.
