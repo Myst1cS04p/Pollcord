@@ -1,5 +1,7 @@
 from Pollcord.client import PollClient
 from Pollcord.poll import Poll
+import importlib.metadata
+
 
 __all__ = ['PollClient', 'Poll']
-__version__ = "0.0.1"
+__version__ = importlib.metadata.version("Pollcord")
