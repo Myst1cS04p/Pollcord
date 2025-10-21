@@ -20,14 +20,15 @@ class PollClient:
         """
         Initializes the aiohttp session with proper headers when entering async context.
         """
-        self.session = aiohttp.ClientSession(headers=self.headers)
+        self.session = await aiohttp.ClientSession(headers=self.headers)
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
         """
         Closes the aiohttp session when exiting async context.
         """
-        await self.session.close()
+        if self.session and not self.session.closed:
+            await self.session.close()
 
     async def create_poll(self, channel_id: int, question: str, options: List[str],
                           duration: int = 1, isMultiselect: bool = False, callback=None) -> Poll:

@@ -45,16 +45,17 @@ class Poll:
         Starts the background task to end the poll after the specified duration.
         """
         if not self.ended:
-            asyncio.create_task(self._schedule_end())
+            self.end_task = asyncio.create_task(self._schedule_end())
 
     async def _schedule_end(self):
         """
         Sleeps for the poll duration then marks it ended and calls the on_end callback.
         """
         await asyncio.sleep(self.duration * 3600)  # Convert hours to seconds
-        self.ended = True
-        if self.on_end:
-            await self._safe_callback()
+        if not self.ended:
+            self.ended = True
+            if self.on_end:
+                await self._safe_callback()
 
     async def _safe_callback(self):
         """
@@ -69,3 +70,13 @@ class Poll:
                 self.on_end(self)
         except Exception as e:
             print(f"[Pollcord] Error in on_end callback: {e}")
+            
+    async def end(self):
+        """
+        Manually ends the poll immediately and calls the on_end callback.
+        """
+        if not self.ended:
+            self.ended = True
+            if self.on_end:
+                await self._safe_callback()
+            self.end_task.cancel()
