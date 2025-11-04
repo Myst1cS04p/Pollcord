@@ -16,12 +16,15 @@ class PollClient:
             "Content-Type": "application/json"
         }
         self.session = None  # HTTP session will be created on entry
-
+    
+    def __repr__(self):
+        return f"<PollClient connection {self.session is not None}>"
+    
     async def __aenter__(self):
         """
         Initializes the aiohttp session with proper headers when entering async context.
         """
-        self.session = await aiohttp.ClientSession(headers=self.headers)
+        self.session = aiohttp.ClientSession(headers=self.headers)
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
@@ -57,7 +60,7 @@ class PollClient:
         }
 
         # Send POST request to Discord API to create the poll
-        async with self.session.post(f"{self.BASE_URL}/channels/{channel_id}/polls", json=payload) as r:
+        async with self.session.post(f"{self.BASE_URL}/channels/{channel_id}/messages", json=payload) as r:
             if r.status != 200 and r.status != 201:
                 text = await r.text()
                 raise PollCreationError(f"Failed to create poll: {r.status} - {text}")
@@ -130,9 +133,7 @@ class PollClient:
             if r.status != 200 and r.status != 204:
                 text = await r.text()
                 raise PollcordError(f"Failed to end poll: {r.status} - {text}", poll=poll)
-        poll.ended = True
-        if poll.on_end:
-            await poll._safe_callback()
+        await poll.end()
 
     @staticmethod
     def format_options(options: List[str]):
@@ -151,4 +152,5 @@ class PollClient:
         """
         Manually close the aiohttp session, if needed.
         """
-        await self.session.close()
+        if self.session and not self.session.closed:
+            await self.session.close()

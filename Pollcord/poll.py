@@ -55,7 +55,9 @@ class Poll:
         """
         Sleeps for the poll duration then marks it ended and calls the on_end callback.
         """
+        print("[Pollcord] Starting poll end scheduler \n" + "Ending in " + str(self.duration*3600) + "s" "\n" + self.__repr__())
         await asyncio.sleep(self.duration * 3600)  # Convert hours to seconds
+        print("[Pollcord] Poll duration elapsed, ending poll\n" + self.__repr__())
         if not self.ended:
             self.ended = True
             if self.on_end:
