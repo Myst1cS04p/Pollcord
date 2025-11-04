@@ -1,6 +1,7 @@
 import asyncio
 from typing import List, Dict, Optional, Callable
 from datetime import datetime, timedelta, timezone
+from pollcord.client import PollClient
 
 class Poll:    
     def __init__(
@@ -77,12 +78,16 @@ class Poll:
         except Exception as e:
             print(f"[Pollcord] Error in on_end callback: {e}")
             
-    async def end(self):
+    async def end(self, client: PollClient = None):
         """
         Manually ends the poll immediately and calls the on_end callback.
         """
         if not self.ended:
+            if client:
+                client.end_poll(self)
             self.ended = True
             if self.on_end:
                 await self._safe_callback()
             self.end_task.cancel()
+    
+    
