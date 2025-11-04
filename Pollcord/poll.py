@@ -2,8 +2,10 @@ import asyncio
 from typing import List, Dict, Optional, Callable
 from datetime import datetime, timedelta, timezone
 from pollcord.client import PollClient
+import logging
 
-class Poll:    
+class Poll:   
+    logger = logging.getLogger("pollcord") 
     def __init__(
         self,
         channel_id: int,
@@ -50,15 +52,19 @@ class Poll:
         Starts the background task to end the poll after the specified duration.
         """
         if not self.ended:
+            logging.debug("Poll started \n" + self)
             self.end_task = asyncio.create_task(self._schedule_end())
 
     async def _schedule_end(self):
         """
         Sleeps for the poll duration then marks it ended and calls the on_end callback.
         """
-        print("[Pollcord] Starting poll end scheduler \n" + "Ending in " + str(self.duration*3600) + "s" "\n" + self.__repr__())
+        self.logger.debug("Starting poll end scheduler \n" + "Ending in " + str(self.duration*3600) + "s" "\n" + self.__repr__())
+        
         await asyncio.sleep(self.duration * 3600)  # Convert hours to seconds
-        print("[Pollcord] Poll duration elapsed, ending poll\n" + self.__repr__())
+        
+        self.logger.debug("Poll duration elapsed, ending poll\n" + self.__repr__())
+        
         if not self.ended:
             self.ended = True
             if self.on_end:
@@ -76,7 +82,7 @@ class Poll:
             else:
                 self.on_end(self)
         except Exception as e:
-            print(f"[Pollcord] Error in on_end callback: {e}")
+            self.logger.exception(f"Error in on_end callback: {e}")
             
     async def end(self, client: PollClient = None):
         """

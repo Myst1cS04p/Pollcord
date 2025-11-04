@@ -2,8 +2,11 @@ import aiohttp
 from typing import List
 from pollcord.poll import Poll
 from pollcord.error import PollCreationError, PollNotFoundError, PollcordError
+import logging
+
 
 class PollClient:
+    logger = logging.getLogger("pollcord") 
     BASE_URL = "https://discord.com/api/v10"
 
     def __init__(self, token: str):
@@ -16,6 +19,7 @@ class PollClient:
             "Content-Type": "application/json"
         }
         self.session = None  # HTTP session will be created on entry
+        self.logger.info("Initialized PollClient instance: \n" + self)
     
     def __repr__(self):
         return f"<PollClient connection {self.session is not None}>"
@@ -58,13 +62,17 @@ class PollClient:
                 "allow_multiselect": isMultiselect,
             }
         }
+        
+        self.logger.debug(f"Attempting to create poll\channel id: {channel_id}, question: {question}, options: {options}, duration: {duration}, {"MultiSelect" if isMultiselect else "Not multiselect"}, callback: {callback}")
 
         # Send POST request to Discord API to create the poll
         async with self.session.post(f"{self.BASE_URL}/channels/{channel_id}/messages", json=payload) as r:
             if r.status != 200 and r.status != 201:
                 text = await r.text()
+                self.logger.error(f"Failed to create poll: {r.status} - {text}")
                 raise PollCreationError(f"Failed to create poll: {r.status} - {text}")
             data = await r.json()
+            self.logger.debug(f"Successfully created poll. \nAPI response: {data}")
 
         # Create and start a local Poll object
         poll = Poll(
@@ -75,6 +83,7 @@ class PollClient:
             duration=duration,
             on_end=callback
         )
+        self.logger.debug(f"Poll object created: {poll}")
         poll.start()  # Schedule auto-expiry
         return poll
 
@@ -85,6 +94,7 @@ class PollClient:
         Returns:
             - List of lists of user IDs per option.
         """
+        self.logger.debug("Getting user votes")
         results = []
         for index in range(len(poll.options)):
             users = await self.fetch_option_users(poll, index)
@@ -98,6 +108,8 @@ class PollClient:
         Returns:
             - List of integers, each representing vote count for that option.
         """
+        self.logger.debug("Counting user votes")
+        
         counts = []
         for index in range(len(poll.options)):
             users = await self.fetch_option_users(poll, index)
@@ -114,12 +126,18 @@ class PollClient:
         Returns:
             - List of user objects (dicts) who voted for this option.
         """
+        
         url = f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/answers/{answer_id + 1}"
+        self.logger.debug(f"Fetching voters for poll({poll}) \nin answer id {answer_id} \nurl: {url}")
         async with self.session.get(url) as r:
-            if r.status != 200:
-                text = await r.text()
+            
+            if r.status == 404:
                 raise PollNotFoundError(text, poll=poll)
+            elif r.status != 200:
+                text = await r.text()
+                self.logger.error(f"Error while fetching poll({poll}) votes \nstatus code: {r.status}")
             data = await r.json()
+            self.logger.debug(f"Successfully fetched voters of answer {answer_id} in poll({poll})\nstatus code: {r.status}\nresponse: {data}")
             return data.get("users", [])
 
     async def end_poll(self, poll: Poll):
@@ -129,9 +147,13 @@ class PollClient:
         Also sets the poll as ended locally and runs the callback.
         """
         url = f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/expire"
+        self.logger.debug(f"Attempting to terminate a poll({poll})\nurl: {url}")
         async with self.session.post(url) as r:
-            if r.status != 200 and r.status != 204:
+            if r.status == 404:
+                raise PollNotFoundError(f"Could not find poll: {r.status} - {text}")
+            elif r.status != 200 and r.status != 204:
                 text = await r.text()
+                self.logger.error(f"Failed to end poll({poll})\nstatus code: {r.status} \nmessage: {text}")
                 raise PollcordError(f"Failed to end poll: {r.status} - {text}", poll=poll)
         await poll.end()
 
@@ -152,5 +174,6 @@ class PollClient:
         """
         Manually close the aiohttp session, if needed.
         """
+        self.logger.info("Closing PollClient HTTP session")
         if self.session and not self.session.closed:
             await self.session.close()
