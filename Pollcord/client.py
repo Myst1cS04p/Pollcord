@@ -1,7 +1,7 @@
 import aiohttp
 from typing import List
-from pollcord.poll import Poll
-from pollcord.error import PollCreationError, PollNotFoundError, PollcordError
+from Pollcord.poll import Poll
+from Pollcord.error import PollCreationError, PollNotFoundError, PollcordError
 import logging
 
 
@@ -63,7 +63,7 @@ class PollClient:
             }
         }
         
-        self.logger.debug(f"Attempting to create poll\channel id: {channel_id}, question: {question}, options: {options}, duration: {duration}, {"MultiSelect" if isMultiselect else "Not multiselect"}, callback: {callback}")
+        self.logger.debug(f"Attempting to create poll\nchannel id: {channel_id}, question: {question}, options: {options}, duration: {duration}, {"MultiSelect" if isMultiselect else "Not multiselect"}, callback: {callback}")
 
         # Send POST request to Discord API to create the poll
         async with self.session.post(f"{self.BASE_URL}/channels/{channel_id}/messages", json=payload) as r:

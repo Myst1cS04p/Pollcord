@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Dict, Optional, Callable
 from datetime import datetime, timedelta, timezone
-from pollcord.client import PollClient
+from Pollcord.client import PollClient
 import logging
 
 class Poll:   

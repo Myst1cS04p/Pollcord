@@ -1,6 +1,6 @@
 import asyncio
 import pytest
-from pollcord import Poll
+from Pollcord import Poll
 
 @pytest.mark.asyncio
 async def test_poll_auto_expires():

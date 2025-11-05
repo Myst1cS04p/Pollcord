@@ -1,6 +1,6 @@
-from pollcord.client import PollClient
-from pollcord.poll import Poll
-from pollcord.error import PollCreationError, PollNotFoundError, PollcordError
+from Pollcord.client import PollClient
+from Pollcord.poll import Poll
+from Pollcord.error import PollCreationError, PollNotFoundError, PollcordError
 import importlib.metadata
 import logging
 

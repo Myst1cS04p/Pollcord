@@ -1,6 +1,6 @@
 import asyncio
 import pytest   
-from pollcord import Poll, PollClient
+from Pollcord import Poll, PollClient
 
 @pytest.mark.asyncio
 async def test_fetch_test_votes():
