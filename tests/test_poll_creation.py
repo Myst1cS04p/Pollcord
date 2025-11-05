@@ -24,7 +24,7 @@ async def test_create_poll_success():
 
     with aioresponses() as m:
         print(mock_response)
-        m.post(f"https://discord.com/api/v10/channels/{channel_id}/polls", payload=mock_response, status=201)
+        m.post(f"https://discord.com/api/v10/channels/{channel_id}/messages", payload=mock_response, status=201)
 
         async with PollClient(token="fake_token") as client:
             poll = await client.create_poll(channel_id=channel_id, question=question, options=options, duration=duration, isMultiselect=isMultiselect)
@@ -44,7 +44,7 @@ async def test_create_poll_failure():
     options = ["Red", "Blue", "Green"]
 
     with aioresponses() as m:
-        m.post(f"https://discord.com/api/v10/channels/{channel_id}/polls", status=400, body="Bad request")
+        m.post(f"https://discord.com/api/v10/channels/{channel_id}/messages", status=400, body="Bad request")
 
         async with PollClient(token="fake_token") as client:
             with pytest.raises(Exception) as excinfo:

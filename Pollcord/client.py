@@ -19,7 +19,7 @@ class PollClient:
             "Content-Type": "application/json"
         }
         self.session = None  # HTTP session will be created on entry
-        self.logger.info("Initialized PollClient instance: \n" + self)
+        self.logger.info("Initialized PollClient instance: \n" + str(self))
     
     def __repr__(self):
         return f"<PollClient connection {self.session is not None}>"
@@ -132,10 +132,11 @@ class PollClient:
         async with self.session.get(url) as r:
             
             if r.status == 404:
-                raise PollNotFoundError(text, poll=poll)
+                raise PollNotFoundError(r.content, poll=poll)
             elif r.status != 200:
                 text = await r.text()
-                self.logger.error(f"Error while fetching poll({poll}) votes \nstatus code: {r.status}")
+                self.logger.error(f"Error while fetching poll({poll}) votes \nmessage: {text} \nstatus code: {r.status}")
+                raise PollcordError(text, poll=poll)
             data = await r.json()
             self.logger.debug(f"Successfully fetched voters of answer {answer_id} in poll({poll})\nstatus code: {r.status}\nresponse: {data}")
             return data.get("users", [])
