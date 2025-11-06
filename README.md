@@ -19,7 +19,7 @@ It handles poll creation, fetching, and expiration — while giving you a clean,
 
 ## Installation
 
-(Not yet on PyPi, this is for post-release)
+> NOTE: Not yet on PyPi, this is for post-release
 ```bash
 pip install pollcord
 ```
@@ -96,7 +96,7 @@ pytest -v
 
 ## Example Scripts
 
-> This section isn't actually implemented yet. 
+> NOTE: This section isn't actually implemented yet. 
 
 See the `examples/` directory for working demos:
 
@@ -139,15 +139,15 @@ If you’d like to help with tests, documentation, or feature ideas:
 ---
 
 ## License
-MIT License © 2025 [Myst1cS04p]
-This project is unaffiliated with Discord Inc.
+ MIT License © 2025 [Myst1cS04p]
+ This project is unaffiliated with Discord Inc.
 
 ---
 
 ## Credits
 
-Inspired by real bot-development pain.
-Made to bring clarity, structure, and sanity to Discord’s poll API.
-Developed by Myst1cS04p
-Development assistance by Github Copilot
+ Inspired by real bot-development pain.
+ Developed by Myst1cS04p
+ Development assistance by Github Copilot
+ README written by the goat - ChatGPT
 
