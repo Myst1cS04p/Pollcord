@@ -5,7 +5,7 @@ It handles poll creation, fetching, and expiration — while giving you a clean,
 
 ---
 
-## ✨ Features
+## Features
 
 - **Async-first design** – fully `async`/`await` compatible
 - **Modular structure** – clean separation of client, models, and errors
