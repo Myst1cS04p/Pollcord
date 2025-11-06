@@ -139,15 +139,15 @@ If you’d like to help with tests, documentation, or feature ideas:
 ---
 
 ## License
- MIT License © 2025 [Myst1cS04p]
- This project is unaffiliated with Discord Inc.
+MIT License © 2025 [Myst1cS04p]  
+This project is unaffiliated with Discord Inc.  
 
 ---
 
 ## Credits
 
- Inspired by real bot-development pain.
- Developed by Myst1cS04p
- Development assistance by Github Copilot
- README written by the goat - ChatGPT
+Inspired by real bot-development pain.  
+Developed by Myst1cS04p  
+Development assistance by Github Copilot  
+README written by the goat - ChatGPT  
 
