@@ -138,6 +138,14 @@ If you’d like to help with tests, documentation, or feature ideas:
 
 ---
 
+## Support
+
+- Discord Server: https://discord.gg/gkc7dSS8Ef
+- Myst1cS04p's discord: `@myst1cso4p`
+- ChatGPT or smth idk
+
+---
+
 ## License
 MIT License © 2025 [Myst1cS04p]  
 This project is unaffiliated with Discord Inc.  
