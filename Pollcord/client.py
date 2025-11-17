@@ -68,21 +68,19 @@ class PollClient:
 
         # Send POST request to Discord API to create the poll
         url = f"{self.BASE_URL}/channels/{channel_id}/messages"
-        r = self.__post_request(url, payload=payload)
+        status, response = await self.__post_request(url, payload=payload)
         
         
-        if r.status != 200 and r.status != 201:
-            text = await r.text()
-            self.logger.error(f"Failed to create poll: {r.status} - {text}")
-            raise PollCreationError(f"Failed to create poll: {r.status} - {text}")
-        data = await r.json()
-        self.logger.debug(f"Successfully created poll. \nAPI response: {data}")
+        if status != 200 and status != 201:
+            self.logger.error(f"Failed to create poll: {status} - {response}")
+            raise PollCreationError(f"Failed to create poll: {status} - {response}")
+        self.logger.debug(f"Successfully created poll. \nAPI response: {response}")
 
 
         # Create and start a local Poll object
         poll = Poll(
             channel_id=channel_id,
-            message_id=data["id"],
+            message_id=response["id"],
             prompt=question,
             options=options,
             duration=duration,
@@ -131,14 +129,15 @@ class PollClient:
             - List of user objects (dicts) who voted for this option. """
         
         url = f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/answers/{answer_id + 1}"
-        r = self.__get_request(url)
-        if r.status == 404:
-            raise PollNotFoundError(await r.text(), poll=poll)
-        elif r.status != 200:
-            text = await r.text()
+        status, response = await self.__get_request(url)
+        
+        if status == 404:
+            raise PollNotFoundError(response, poll=poll)
+        elif status != 200:
+            text = await response
             raise PollcordError(text, poll=poll)
 
-        data = await r.json()
+        data = response
         return data.get("users", [])
 
 
@@ -151,14 +150,14 @@ class PollClient:
         
         url = f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/expire"
         self.logger.debug(f"Attempting to terminate a poll({poll})\nurl: {url}")
-        r = self.__post_request(url)
+        status, response = await self.__post_request(url)
         
-        if r.status == 404:
-            raise PollNotFoundError(f"Could not find poll: {r.status} - {text}")
-        elif r.status != 200 and r.status != 204:
-            text = await r.text()
-            self.logger.error(f"Failed to end poll({poll})\nstatus code: {r.status} \nmessage: {text}")
-            raise PollcordError(f"Failed to end poll: {r.status} - {text}", poll=poll)
+        if status == 404:
+            raise PollNotFoundError(f"Could not find poll: {status} - {response}")
+        elif status != 200 and status != 204:
+            text = await text()
+            self.logger.error(f"Failed to end poll({poll})\nstatus code: {status} \nmessage: {text}")
+            raise PollcordError(f"Failed to end poll: {status} - {text}", poll=poll)
         
         await poll.end()
 
@@ -176,6 +175,7 @@ class PollClient:
         ]
 
     async def __get_request(self, url:str, max_retries:int=5):
+        self.logger.info(f"Sending request to {url}\nmax retries: {max_retries}")
         retries = 0
         while retries < max_retries:
             async with self.session.get(url) as r:
@@ -186,14 +186,14 @@ class PollClient:
                     retries += 1
                     continue
                 else:
-                    return r
+                    return r.status, await r.json()
                 
         raise PollcordError("Exceeded maximum retries due to rate limiting.")
     
-    async def __post_request(self, url:str, payload, max_retries:int=5):
+    async def __post_request(self, url:str, payload=None, max_retries:int=5):
         retries = 0
         while retries < max_retries:
-            async with self.session.post(url, json=payload) as r:
+            async with self.session.post(url, json=None if not payload else payload) as r:
                 if r.status == 429: 
                     wait_time = r.json["retry_after"] # exponential backoff
                     self.logger.warning(f"\nRate limited(Status Code 429).\n Waiting {wait_time}s before retry ({retries+1}/{max_retries})\nServer Response: {r.content}.")
@@ -201,7 +201,7 @@ class PollClient:
                     retries += 1
                     continue
                 else:
-                    return r
+                    return r.status, await r.json()
                 
         raise PollcordError("Exceeded maximum retries due to rate limiting.")
 
