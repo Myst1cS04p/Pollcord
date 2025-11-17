@@ -180,7 +180,8 @@ class PollClient:
         while retries < max_retries:
             async with self.session.get(url) as r:
                 if r.status == 429: 
-                    wait_time = r.json()["retry_after"] # exponential backoff
+                    data = await r.json()
+                    wait_time = data["retry_after"] # exponential backoff
                     self.logger.warning(f"\nRate limited(Status Code 429).\n Waiting {wait_time}s before retry ({retries+1}/{max_retries})\nServer Response: {r.content}.")
                     await asyncio.sleep(wait_time)
                     retries += 1
@@ -195,7 +196,8 @@ class PollClient:
         while retries < max_retries:
             async with self.session.post(url, json=None if not payload else payload) as r:
                 if r.status == 429: 
-                    wait_time = r.json()["retry_after"] # exponential backoff
+                    data = await r.json()
+                    wait_time = data["retry_after"] # exponential backoff
                     self.logger.warning(f"\nRate limited(Status Code 429).\n Waiting {wait_time}s before retry ({retries+1}/{max_retries})\nServer Response: {r.content}.")
                     await asyncio.sleep(wait_time)
                     retries += 1
