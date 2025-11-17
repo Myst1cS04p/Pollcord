@@ -78,7 +78,8 @@ class Poll:
 
     async def end(self, client: Optional["PollClient"] = None):
         """
-        Manually ends the poll immediately and calls the on_end callback.
+        Manually calls the on_end callback.
+        Poll.end() does NOT end the poll. Use Poll.end(PollClient) to end the poll, or PollClient.end_poll(Poll)
         """
         if not self.ended:
             if client:
