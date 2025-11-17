@@ -43,21 +43,21 @@ from pollcord import PollClient
 TOKEN = "your_bot_token_here"
 
 async def main():
-    async with PollClient(TOKEN) as pollcord:
+    async with PollClient(TOKEN) as client:
         # Create a poll
-        poll = await pollcord.create_poll(
+        poll = await client.create_poll(
             channel_id=123456789012345678,
             question="What should we build next?",
             options=["Mega base", "PvP arena", "Mob farm"]
         )
-        print(f"Created poll: {poll.id}")
+        print(f"Created poll: {poll.message_id}")
 
         # Fetch results
-        votes = await poll.get_vote_counts()
+        votes = await client.get_vote_counts(poll)
         print("Current votes:", votes)
 
         # End the poll manually
-        await poll.end()
+        await poll.end(client)
         print("Poll ended!")
 
 asyncio.run(main())
@@ -100,9 +100,10 @@ pytest -v
 
 See the `examples/` directory for working demos:
 
-- `simple_poll.py` — basic “create and end a poll”
-- `multipoll.py` — an example on how to manage many polls simeltaneously
-- `timed_poll.py` — schedule an automatic poll end callback
+- `basic.py` — Basic poll creation, termination, and vote fetching
+- `concurrency.py` — Demonstration of concurrent poll handling
+- `rate_limit.py` — Demonstrates rate limit handling
+- `lifecycle.py` — Poll creation and periodic fetching of data
 
 ---
 
@@ -117,14 +118,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 ## Roadmap
 
-- Basic poll creation/fetch/end
-- Improved error messages
-- Basic test suite
-- Rate limiting handling
-- Retry on failure
-- Live testing
 - Documentation that doesn’t completely suck 😅
-- Examples directory
+- Request queuing 
 
 ---
 
@@ -157,5 +152,5 @@ This project is unaffiliated with Discord Inc.
 Inspired by real bot-development pain.  
 Developed by Myst1cS04p  
 Development assistance by Github Copilot  
-README written by the goat - ChatGPT  
+README, examples, and tests written by ChatGPT cuz I'm lazy
 
