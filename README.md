@@ -19,7 +19,6 @@ It handles poll creation, fetching, and expiration — while giving you a clean,
 
 ## Installation
 
-> NOTE: Not yet on PyPi, this is for post-release
 ```bash
 pip install pollcord
 ```
@@ -96,8 +95,6 @@ pytest -v
 
 ## Example Scripts
 
-> NOTE: This section isn't actually implemented yet. 
-
 See the `examples/` directory for working demos:
 
 - `basic.py` — Basic poll creation, termination, and vote fetching
@@ -118,7 +115,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 ## Roadmap
 
-- Documentation that doesn’t completely suck 😅
+- Documentation that doesn’t completely suck :sweat_smile:
 - Request queuing 
 
 ---
