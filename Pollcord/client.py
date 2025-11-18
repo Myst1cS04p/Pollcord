@@ -132,9 +132,11 @@ class PollClient:
         status, response = await self.__get_request(url)
         
         if status == 404:
+            self.logger.error(f"Error while fetching poll({poll})...\nMessage: {response}")
             raise PollNotFoundError(response, poll=poll)
         elif status != 200:
-            text = await response
+            text = response
+            self.logger.error(f"Error while fetching poll({poll})...\nMessage: {text}")
             raise PollcordError(text, poll=poll)
 
         data = response
@@ -187,7 +189,11 @@ class PollClient:
                     retries += 1
                     continue
                 else:
-                    return r.status, await r.json()
+                    try:
+                        data = await r.json()
+                    except Exception:
+                        data = await r.text()
+                    return r.status, data
                 
         raise PollcordError("Exceeded maximum retries due to rate limiting.")
     
@@ -203,7 +209,11 @@ class PollClient:
                     retries += 1
                     continue
                 else:
-                    return r.status, await r.json()
+                    try:
+                        data = await r.json()
+                    except Exception:
+                        data = await r.text()
+                    return r.status, data
                 
         raise PollcordError("Exceeded maximum retries due to rate limiting.")
 

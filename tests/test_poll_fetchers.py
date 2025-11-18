@@ -56,8 +56,8 @@ async def test_get_vote_users_success(poll):
             users_per_option = await client.get_vote_users(poll)
 
     assert users_per_option == [
-        ["1"],
-        ["2", "3"],
+        [{"id": "1"}],
+        [{"id": "2"}, {"id": "3"}],
         []
     ]
 

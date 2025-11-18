@@ -12,7 +12,7 @@ async def test_create_poll_success():
     isMultiselect = False
 
     mock_response = {
-        "message_id": 9876543210,
+        "id": 9876543210,
         "channel_id": str(channel_id),
         "poll": {
             "question": {"text": question},
@@ -49,8 +49,7 @@ async def test_create_poll_failure():
         async with PollClient(token="fake_token") as client:
             with pytest.raises(Exception) as excinfo:
                 await client.create_poll(channel_id, question, options)
-
-            assert "Failed to create poll" in str(excinfo.value)
+                assert "Failed to create poll" in str(excinfo.value)
 
 @pytest.mark.asyncio
 async def test_create_poll_error():
