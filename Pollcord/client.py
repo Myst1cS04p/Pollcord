@@ -183,6 +183,8 @@ class PollClient:
         ]
 
     async def __get_request(self, url:str, max_retries:int=5):
+        if(not self.session):
+            raise RuntimeError("Pollcord session not initialized...")
         self.logger.info(f"Sending request to {url}\nmax retries: {max_retries}")
         retries = 0
         while retries < max_retries:
@@ -204,6 +206,9 @@ class PollClient:
         raise PollcordError("Exceeded maximum retries due to rate limiting.")
     
     async def __post_request(self, url:str, payload=None, max_retries:int=5):
+        if(not self.session):
+            raise RuntimeError("Pollcord session not initialized...")
+        
         retries = 0
         while retries < max_retries:
             async with self.session.post(url, json=None if not payload else payload) as r:
