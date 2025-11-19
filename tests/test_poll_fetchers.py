@@ -1,4 +1,3 @@
-import asyncio
 import pytest   
 from Pollcord import Poll, PollClient, PollNotFoundError, PollcordError
 from aioresponses import aioresponses

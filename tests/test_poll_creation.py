@@ -1,5 +1,4 @@
 import pytest
-import pytest_asyncio
 from aioresponses import aioresponses
 from Pollcord import PollClient, Poll
 
