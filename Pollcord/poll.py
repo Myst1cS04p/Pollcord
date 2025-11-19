@@ -1,6 +1,6 @@
 from __future__ import annotations  # allows forward references in type hints
 import asyncio
-from typing import List, Optional, Callable, TYPE_CHECKING
+from typing import List, Optional, Callable
 from datetime import datetime, timedelta, timezone
 import logging
 
