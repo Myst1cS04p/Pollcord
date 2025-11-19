@@ -4,9 +4,6 @@ from typing import List, Optional, Callable, TYPE_CHECKING
 from datetime import datetime, timedelta, timezone
 import logging
 
-if TYPE_CHECKING:
-    from Pollcord.client import PollClient  # only imported for type checking
-
 class Poll:   
     logger = logging.getLogger("pollcord") 
 

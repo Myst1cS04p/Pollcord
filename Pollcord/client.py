@@ -70,7 +70,7 @@ class PollClient:
             }
         }
         
-        self.logger.debug(f"Attempting to create poll\nchannel id: {channel_id}, question: {question}, options: {options}, duration: {duration}, {"MultiSelect" if isMultiselect else "Not multiselect"}, callback: {callback}")
+        self.logger.debug(f"Attempting to create poll\nchannel id: {channel_id}, question: {question}, options: {options}, duration: {duration}, {'MultiSelect' if isMultiselect else 'Not multiselect'}, callback: {callback}")
 
         # Send POST request to Discord API to create the poll
         url = f"{self.BASE_URL}/channels/{channel_id}/messages"

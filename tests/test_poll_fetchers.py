@@ -90,6 +90,6 @@ async def test_get_vote_users_handles_error(poll, caplog):
 
         async with PollClient(token="fake_token") as client:
             with pytest.raises(PollcordError):
-                users_per_option = await client.get_vote_users(poll)
+                _ = await client.get_vote_users(poll)
 
     assert "Error while fetching poll" in caplog.text
