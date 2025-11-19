@@ -55,6 +55,12 @@ class PollClient:
         Returns:
             - A Poll object representing the created poll.
         """
+        
+        if(len(options) < 2):
+            raise PollCreationError(f"Atleast 2 options are required to create a poll, you have passed {len(options)} options({options})")
+        if(len(options) > 10):
+            raise PollCreationError(f"The maximum options for a poll are 10, you have passed {len(options)} options({options})")
+        
         payload = {
             "poll": {
                 "question": {"text": question},
@@ -157,7 +163,7 @@ class PollClient:
         if status == 404:
             raise PollNotFoundError(f"Could not find poll: {status} - {response}")
         elif status != 200 and status != 204:
-            text = await text()
+            text = await response.text()
             self.logger.error(f"Failed to end poll({poll})\nstatus code: {status} \nmessage: {text}")
             raise PollcordError(f"Failed to end poll: {status} - {text}", poll=poll)
         
