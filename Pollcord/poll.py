@@ -56,13 +56,13 @@ class Poll:
         self.logger.debug(
             f"Starting poll end scheduler (ending in {self.duration * 3600}s): {self}"
         )
-        await asyncio.sleep(self.duration * 3600)
-        self.logger.debug(f"Poll duration elapsed, ending poll: {self}")
-
-        if not self.ended:
-            self.ended = True
-            if self.on_end:
-                await self._safe_callback()
+        try:
+            await asyncio.sleep(self.duration * 3600)
+            if not self.ended:
+                await self.end()
+        except asyncio.CancelledError:
+            # task cancelled because poll ended early
+            return
 
     async def _safe_callback(self):
         """
