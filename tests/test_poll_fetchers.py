@@ -53,12 +53,11 @@ async def test_get_vote_users_success(poll):
 
         async with PollClient(token="fake_token") as client:
             users_per_option = await client.get_vote_users(poll)
-
-    assert users_per_option == [
-        [{"id": "1"}],
-        [{"id": "2"}, {"id": "3"}],
-        []
-    ]
+            assert users_per_option == [
+                [{"id": "1"}],
+                [{"id": "2"}, {"id": "3"}],
+                []
+            ]
 
 @pytest.mark.asyncio
 async def test_get_vote_counts_success(poll):
