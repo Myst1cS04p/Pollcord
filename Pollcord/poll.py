@@ -36,9 +36,11 @@ class Poll:
 
     def __repr__(self):
         return (
-            f"<Poll channel_id={self.channel_id} message_id={self.message_id} "
-            f"prompt={self.prompt!r} options={self.options} duration={self.duration} "
-            f"isMultiselect={self.isMultiselect} ended={self.ended}>"
+            f"<(Poll Object) Channel ID = {self.channel_id}, Message ID = {self.message_id}\n "
+            f"Prompt = {self.prompt!r}, Options = {self.options}, Duration = {self.duration}h\n "
+            f"Start Time = {self.start_time}, Elapsed Time = {datetime.now(timezone.utc) - self.start_time}, End Time = {self.end_time}"
+            f"Multiselect = {self.isMultiselect}, Ended = {self.ended}\n>"
+            
         )
 
     def start(self):
