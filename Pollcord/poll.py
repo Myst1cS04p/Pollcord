@@ -4,8 +4,9 @@ from typing import List, Optional, Callable
 from datetime import datetime, timedelta, timezone
 import logging
 
-class Poll:   
-    logger = logging.getLogger("pollcord") 
+
+class Poll:
+    logger = logging.getLogger("pollcord")
 
     def __init__(
         self,
@@ -15,7 +16,7 @@ class Poll:
         options: List[str],
         duration: int = 1,
         isMultiselect: bool = False,
-        on_end: Optional[Callable[['Poll'], None]] = None
+        on_end: Optional[Callable[["Poll"], None]] = None,
     ):
         """
         Represents a local poll instance, with logic for auto-expiration and callbacks.
@@ -37,7 +38,6 @@ class Poll:
             f"Prompt = {self.prompt!r}, Options = {self.options}, Duration = {self.duration}h\n "
             f"Start Time = {self.start_time}, Elapsed Time = {datetime.now(timezone.utc) - self.start_time}, End Time = {self.end_time}"
             f"Multiselect = {self.isMultiselect}, Ended = {self.ended}\n>"
-            
         )
 
     def start(self):

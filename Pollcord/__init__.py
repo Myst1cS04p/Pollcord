@@ -7,5 +7,11 @@ import logging
 logger = logging.getLogger("pollcord")
 logger.addHandler(logging.NullHandler())
 
-__all__ = ['PollClient', 'Poll', 'PollCreationError', 'PollNotFoundError', 'PollcordError']
+__all__ = [
+    "PollClient",
+    "Poll",
+    "PollCreationError",
+    "PollNotFoundError",
+    "PollcordError",
+]
 __version__ = importlib.metadata.version("Pollcord")

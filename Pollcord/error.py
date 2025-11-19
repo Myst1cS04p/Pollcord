@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 class PollcordError(Exception):
     """Base exception for Pollcord errors."""
+
     def __init__(self, message: str, poll: Optional[Poll] = None):
         """
         Initialize a PollcordError.
