@@ -49,7 +49,8 @@ class Poll:
         """
         if not self.ended:
             self.logger.debug(f"Poll started: {self}")
-            self.end_task = asyncio.create_task(self._schedule_end())
+            loop = asyncio.get_running_loop()
+            self.end_task = loop.create_task(self._schedule_end())
 
     async def _schedule_end(self):
         """
@@ -78,16 +79,19 @@ class Poll:
         except Exception as e:
             self.logger.exception(f"Error in on_end callback: {e}")
 
-    async def end(self, client: Optional["PollClient"] = None):
+    async def end(self):
         """
-        Manually calls the on_end callback.
-        Poll.end() does NOT end the poll. Use Poll.end(PollClient) to end the poll, or PollClient.end_poll(Poll)
+        Marks the poll as ended locally and triggers the callback.
+        This does NOT interact with the Discord API. Call PollClient.close_poll(poll) to end the poll.
         """
-        if not self.ended:
-            if client:
-                await client.end_poll(self)  # note: await added if end_poll is async
-            self.ended = True
-            if self.on_end:
-                await self._safe_callback()
-            if hasattr(self, "end_task"):
-                self.end_task.cancel()
+        if self.ended:
+            return
+
+        self.ended = True
+
+        # cancel scheduler if running
+        if hasattr(self, "end_task"):
+            self.end_task.cancel()
+
+        if self.on_end:
+            await self._safe_callback()

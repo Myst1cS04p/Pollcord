@@ -40,7 +40,7 @@ class PollClient:
             await self.session.close()
 
     async def create_poll(self, channel_id: int, question: str, options: List[str],
-                          duration: int = 1, isMultiselect: bool = False, callback=None) -> Poll:
+                          duration: int = 1, isMultiselect: bool = False, callback=None, max_retries:int=5) -> Poll:
         """
         Creates a poll in a specified Discord channel.
 
@@ -64,7 +64,7 @@ class PollClient:
         payload = {
             "poll": {
                 "question": {"text": question},
-                "answers": self.format_options(options),
+                "answers": self.__format_options(options),
                 "duration": duration,
                 "allow_multiselect": isMultiselect,
             }
@@ -74,7 +74,7 @@ class PollClient:
 
         # Send POST request to Discord API to create the poll
         url = f"{self.BASE_URL}/channels/{channel_id}/messages"
-        status, response = await self.__post_request(url, payload=payload)
+        status, response = await self.__post_request(url, payload=payload, max_retries=max_retries)
         
         
         if status != 200 and status != 201:
@@ -135,7 +135,7 @@ class PollClient:
             - List of user objects (dicts) who voted for this option. """
         
         url = f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/answers/{answer_id + 1}"
-        status, response = await self.__get_request(url)
+        status, response = await self.__get_request(url, max_retries=max_retries)
         
         if status == 404:
             self.logger.error(f"Error while fetching poll({poll})...\nMessage: {response}")
@@ -149,7 +149,7 @@ class PollClient:
         return data.get("users", [])
 
 
-    async def end_poll(self, poll: Poll):
+    async def end_poll(self, poll: Poll, max_retries:int=5):
         """
         Ends a poll early by expiring it via the Discord API.
 
@@ -158,25 +158,18 @@ class PollClient:
         
         url = f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/expire"
         self.logger.debug(f"Attempting to terminate a poll({poll})\nurl: {url}")
-        status, response = await self.__post_request(url)
-        
+
+        status, response = await self.__post_request(url, max_retries=max_retries)
+
         if status == 404:
             raise PollNotFoundError(f"Could not find poll: {status} - {response}")
-        elif status != 200 and status != 204:
-            text = await response.text()
-            self.logger.error(f"Failed to end poll({poll})\nstatus code: {status} \nmessage: {text}")
-            raise PollcordError(f"Failed to end poll: {status} - {text}", poll=poll)
-        
+        elif status not in (200, 204):
+            raise PollcordError(f"Failed to end poll: {status} - {response}", poll=poll)
+
         await poll.end()
 
     @staticmethod
-    def format_options(options: List[str]):
-        """
-        Formats a list of option strings into Discord's poll answer format.
-
-        Returns:
-            - List of formatted option dictionaries.
-        """
+    def __format_options(options: List[str]):
         return [
             {"answer_id": str(i + 1), "poll_media": {"text": str(opt)}}
             for i, opt in enumerate(options)
