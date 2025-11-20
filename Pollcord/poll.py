@@ -22,6 +22,14 @@ class Poll:
     ):
         """
         Represents a local poll instance, with logic for auto-expiration and callbacks.
+        
+        :param channel_id (int): The channel in which the poll exists
+        :param message_id (int): The message ID of the poll
+        :param prompt (str): The question asked in the poll
+        :param options (List(str)): A list of options provided to the user in the poll. Length of the list should be between 2-10.
+        :param duration (int): The duration in hours of the poll (Discord API specifies hours)
+        :param isMultiSelect (bool): If True a poll will be generated where users can vote on more than 1 option at a time
+        :param on_end (Callable): A callback for when the poll ends
         """
         self.channel_id = channel_id
         self.message_id = message_id

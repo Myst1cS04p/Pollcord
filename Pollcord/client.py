@@ -13,6 +13,8 @@ class PollClient:
     def __init__(self, token: str):
         """
         Initializes the PollClient with a bot token for authorization.
+        
+        :params token (int): Your bot token
         """
         self.token = token
         self.headers = {
@@ -36,6 +38,7 @@ class PollClient:
         """
         Closes the aiohttp session when exiting async context.
         """
+        self.logger.debug("Closing PollClient HTTP session")
         if self.session and not self.session.closed:
             await self.session.close()
 
@@ -44,16 +47,14 @@ class PollClient:
         """
         Creates a poll in a specified Discord channel.
 
-        Parameters:
-            - channel_id (int): The channel to post the poll in.
-            - question (str): The poll prompt/question.
-            - options (List[str]): List of answer choices.
-            - duration (int): How long the poll should last (in hours).
-            - isMultiselect (bool): Whether users can vote for more than one option.
-            - callback (Callable): Function to be called when poll ends.
+        :param channel_id (int): The channel to post the poll in.
+        :param question (str): The poll prompt/question.
+        :param options (List[str]): List of answer choices.
+        :param duration (int): How long the poll should last (in hours).
+        :param isMultiselect (bool): Whether users can vote for more than one option.
+        :param callback (Callable): Function to be called when poll ends.
 
-        Returns:
-            - A Poll object representing the created poll.
+        :returns: A Poll object representing the created poll.
         """
         payload = {
             "poll": {
@@ -94,8 +95,7 @@ class PollClient:
         """
         Fetches user IDs for each option in the poll.
 
-        Returns:
-            - List of lists of user IDs per option.
+        :returns: List of lists of user IDs per option.
         """
         self.logger.debug("Getting user votes")
         results = []
@@ -108,8 +108,7 @@ class PollClient:
         """
         Fetches the number of votes per option in the poll.
 
-        Returns:
-            - List of integers, each representing vote count for that option.
+        :returns: List of integers, each representing vote count for that option.
         """
         self.logger.debug("Counting user votes")
         
@@ -121,12 +120,12 @@ class PollClient:
 
     async def fetch_option_users(self, poll: Poll, answer_id: int, max_retries: int = 5):
         """ Internal method to get users who voted for a specific answer option. 
-        Parameters: 
-            - poll (Poll): The poll to get the answer of
-            - answer_id (int): Index of the answer option. 
-            - max_retries(optional) (int): Maximum number of retries in case of rate limiting
-        Returns: 
-            - List of user objects (dicts) who voted for this option. """
+        
+        :param poll (Poll): The poll to get the answer of
+        :param answer_id (int): Index of the answer option. 
+        :param max_retries(optional) (int): Maximum number of retries in case of rate limiting
+        
+        :returns: List of user objects (dicts) who voted for this option. """
         
         url = f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/answers/{answer_id + 1}"
         status, response = await self.__get_request(url)
@@ -168,8 +167,7 @@ class PollClient:
         """
         Formats a list of option strings into Discord's poll answer format.
 
-        Returns:
-            - List of formatted option dictionaries.
+        :returns: List of formatted option dictionaries.
         """
         return [
             {"answer_id": str(i + 1), "poll_media": {"text": str(opt)}}
