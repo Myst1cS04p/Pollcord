@@ -104,6 +104,7 @@ class PollClient:
             prompt=question,
             options=options,
             duration=duration,
+            isMultiselect=isMultiselect,
             on_end=callback,
         )
         self.logger.debug(f"Poll object created: {poll}")

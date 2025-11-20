@@ -11,7 +11,7 @@ test = [
 ]
 [project]
 name = "Pollcord"
-version = "0.1b1"
+version = "0.1b2"
 description = "Async Python wrapper for Discord's native polling API."
 readme = "README.md"
 requires-python = ">=3.9"
