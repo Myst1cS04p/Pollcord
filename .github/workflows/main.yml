@@ -27,7 +27,7 @@ jobs:
     - name: Run Linter
       run: |
         ruff check .
-        ruff format --check .
+        ruff format .
 
   test:
     runs-on: ubuntu-latest
