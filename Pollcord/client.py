@@ -114,7 +114,7 @@ class PollClient:
         """
         Fetches user IDs for each option in the poll.
 
-        Returns:
+        Returns: 
             - List of lists of user IDs per option.
         """
         self.logger.debug("Getting user votes")
