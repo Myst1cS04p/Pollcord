@@ -4,12 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 test = [
-    "pytest",
-    "pytest-cov",
-    "aioresponses",
-    "pytest-asyncio"
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-asyncio>=0.23",
+    "aioresponses>=0.7",
 ]
-
 [project]
 name = "Pollcord"
 version = "0.1b1"

@@ -1,5 +1,5 @@
 """
-This example demonstrates pollcord's ability to handle polls concurrently 
+This example demonstrates pollcord's ability to handle polls concurrently
 """
 
 import asyncio
@@ -11,15 +11,17 @@ load_dotenv(".env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 CHANNEL = input("Channel ID: ")
 
+
 async def make_poll(client, i):
     poll = await client.create_poll(
         channel_id=CHANNEL,
         question=f"Concurrency test #{i}",
         options=["One", "Two"],
-        duration=2
+        duration=2,
     )
     print(f"Created poll #{i}: {poll.message_id}")
     return poll
+
 
 async def main():
     print("Running concurrency test...")
@@ -32,5 +34,6 @@ async def main():
     print(" - No overlapping request errors")
     print(" - No rate limit meltdown")
     print(" - Likely unordered polls")
+
 
 asyncio.run(main())

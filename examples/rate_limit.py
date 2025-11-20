@@ -13,6 +13,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 CHANNEL = input("Channel ID: ")
 logging.basicConfig(level=logging.DEBUG)
 
+
 async def spam(client):
     return await client.create_poll(
         channel_id=CHANNEL,
@@ -20,6 +21,7 @@ async def spam(client):
         options=["A", "B"],
         duration=60,
     )
+
 
 async def main():
     print("Starting rate limit test...")
@@ -40,5 +42,6 @@ async def main():
     print(" - No crashes")
     print(" - Delays inserted")
     print(" - Polls created in order\n")
+
 
 asyncio.run(main())

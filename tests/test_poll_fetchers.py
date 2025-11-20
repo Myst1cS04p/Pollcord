@@ -1,7 +1,7 @@
-import asyncio
-import pytest   
+import pytest
 from Pollcord import Poll, PollClient, PollNotFoundError, PollcordError
 from aioresponses import aioresponses
+
 
 @pytest.fixture
 def poll():
@@ -12,8 +12,9 @@ def poll():
         prompt="Favorite color?",
         options=["Red", "Blue", "Green"],
         duration=1,
-        on_end=None
+        on_end=None,
     )
+
 
 @pytest.mark.asyncio
 async def test_fetch_option_users_success(poll):
@@ -27,7 +28,8 @@ async def test_fetch_option_users_success(poll):
             users = await client.fetch_option_users(poll, 0)
 
     assert users == [{"id": "1"}, {"id": "2"}]
-    
+
+
 @pytest.mark.asyncio
 async def test_fetch_option_users_not_found(poll):
     url = f"https://discord.com/api/v10/channels/{poll.channel_id}/polls/{poll.message_id}/answers/1"
@@ -38,41 +40,38 @@ async def test_fetch_option_users_not_found(poll):
         async with PollClient(token="fake_token") as client:
             with pytest.raises(PollNotFoundError):
                 await client.fetch_option_users(poll, 0)
-                
+
+
 @pytest.mark.asyncio
 async def test_get_vote_users_success(poll):
     base = f"https://discord.com/api/v10/channels/{poll.channel_id}/polls/{poll.message_id}"
     responses = [
-        {"users": [{"id": "1"}]},        # Red
+        {"users": [{"id": "1"}]},  # Red
         {"users": [{"id": "2"}, {"id": "3"}]},  # Blue
-        {"users": []},                   # Green
+        {"users": []},  # Green
     ]
 
     with aioresponses() as m:
         for i, resp in enumerate(responses):
-            m.get(f"{base}/answers/{i+1}", status=200, payload=resp)
+            m.get(f"{base}/answers/{i + 1}", status=200, payload=resp)
 
         async with PollClient(token="fake_token") as client:
             users_per_option = await client.get_vote_users(poll)
+            assert users_per_option == [[{"id": "1"}], [{"id": "2"}, {"id": "3"}], []]
 
-    assert users_per_option == [
-        [{"id": "1"}],
-        [{"id": "2"}, {"id": "3"}],
-        []
-    ]
 
 @pytest.mark.asyncio
 async def test_get_vote_counts_success(poll):
     base = f"https://discord.com/api/v10/channels/{poll.channel_id}/polls/{poll.message_id}"
     responses = [
-        {"users": [{"id": "1"}]},             # 1 vote
+        {"users": [{"id": "1"}]},  # 1 vote
         {"users": [{"id": "2"}, {"id": "3"}]},  # 2 votes
-        {"users": []},                        # 0 votes
+        {"users": []},  # 0 votes
     ]
 
     with aioresponses() as m:
         for i, resp in enumerate(responses):
-            m.get(f"{base}/answers/{i+1}", status=200, payload=resp)
+            m.get(f"{base}/answers/{i + 1}", status=200, payload=resp)
 
         async with PollClient(token="fake_token") as client:
             counts = await client.get_vote_counts(poll)
@@ -92,6 +91,6 @@ async def test_get_vote_users_handles_error(poll, caplog):
 
         async with PollClient(token="fake_token") as client:
             with pytest.raises(PollcordError):
-                users_per_option = await client.get_vote_users(poll)
+                _ = await client.get_vote_users(poll)
 
     assert "Error while fetching poll" in caplog.text
