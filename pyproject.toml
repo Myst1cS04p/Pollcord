@@ -7,6 +7,7 @@ test = [
     "pytest",
     "pytest-cov",
     "aioresponses",
+    "pytest-asyncio"
 ]
 
 [project]
