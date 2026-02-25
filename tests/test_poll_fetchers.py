@@ -58,7 +58,12 @@ async def test_get_vote_users_success(poll):
     base = f"https://discord.com/api/v10/channels/{poll.channel_id}/polls/{poll.message_id}"
     responses = [
         {"users": [{"id": "1", "username": "alice", "discriminator": "0"}]},
-        {"users": [{"id": "2", "username": "bob", "discriminator": "0"}, {"id": "3", "username": "carol", "discriminator": "0"}]},
+        {
+            "users": [
+                {"id": "2", "username": "bob", "discriminator": "0"},
+                {"id": "3", "username": "carol", "discriminator": "0"},
+            ]
+        },
         {"users": []},
     ]
 
@@ -81,7 +86,12 @@ async def test_get_vote_counts_success(poll):
     base = f"https://discord.com/api/v10/channels/{poll.channel_id}/polls/{poll.message_id}"
     responses = [
         {"users": [{"id": "1", "username": "alice", "discriminator": "0"}]},
-        {"users": [{"id": "2", "username": "bob", "discriminator": "0"}, {"id": "3", "username": "carol", "discriminator": "0"}]},
+        {
+            "users": [
+                {"id": "2", "username": "bob", "discriminator": "0"},
+                {"id": "3", "username": "carol", "discriminator": "0"},
+            ]
+        },
         {"users": []},
     ]
 
@@ -100,7 +110,11 @@ async def test_get_vote_users_handles_error(poll, caplog):
     base = f"https://discord.com/api/v10/channels/{poll.channel_id}/polls/{poll.message_id}"
 
     with aioresponses() as m:
-        m.get(f"{base}/answers/1", status=200, payload={"users": [{"id": "1", "username": "alice", "discriminator": "0"}]})
+        m.get(
+            f"{base}/answers/1",
+            status=200,
+            payload={"users": [{"id": "1", "username": "alice", "discriminator": "0"}]},
+        )
         m.get(f"{base}/answers/2", status=500, body="Server error")
         m.get(f"{base}/answers/3", status=200, payload={"users": []})
 

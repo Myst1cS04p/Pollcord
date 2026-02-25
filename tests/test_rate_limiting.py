@@ -91,8 +91,12 @@ async def test_get_vote_counts_matches_user_counts(poll):
         f"/polls/{poll.message_id}"
     )
     responses = [
-        {"users": [{"id": "1", "username": "a", "discriminator": "0"},
-                   {"id": "2", "username": "b", "discriminator": "0"}]},
+        {
+            "users": [
+                {"id": "1", "username": "a", "discriminator": "0"},
+                {"id": "2", "username": "b", "discriminator": "0"},
+            ]
+        },
         {"users": [{"id": "3", "username": "c", "discriminator": "0"}]},
         {"users": []},
     ]
@@ -114,7 +118,9 @@ async def test_rate_limit_multiple_consecutive_429s(poll):
         f"https://discord.com/api/v10/channels/{poll.channel_id}"
         f"/polls/{poll.message_id}/answers/1"
     )
-    success_payload = {"users": [{"id": "1", "username": "alice", "discriminator": "0"}]}
+    success_payload = {
+        "users": [{"id": "1", "username": "alice", "discriminator": "0"}]
+    }
 
     with aioresponses() as m:
         m.get(url, status=429, payload={"retry_after": 0.01})

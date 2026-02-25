@@ -96,7 +96,9 @@ class PollClient:
             f"options={options} duration={duration}h multiselect={isMultiselect}"
         )
 
-        status, response = await self._request("POST", url, payload=payload, max_retries=max_retries)
+        status, response = await self._request(
+            "POST", url, payload=payload, max_retries=max_retries
+        )
 
         if status not in (200, 201):
             self.logger.error(f"Failed to create poll: {status} - {response}")
@@ -125,8 +127,7 @@ class PollClient:
         """
         self.logger.debug(f"Fetching vote users for poll {poll.message_id}")
         tasks = [
-            self.fetch_option_users(poll, index)
-            for index in range(len(poll.options))
+            self.fetch_option_users(poll, index) for index in range(len(poll.options))
         ]
         return list(await asyncio.gather(*tasks))
 
@@ -172,7 +173,9 @@ class PollClient:
             self.logger.error(f"Poll not found ({poll.message_id}): {response}")
             raise PollNotFoundError(response, poll=poll)
         elif status != 200:
-            self.logger.error(f"Error fetching poll voters ({poll.message_id}): {response}")
+            self.logger.error(
+                f"Error fetching poll voters ({poll.message_id}): {response}"
+            )
             raise PollcordError(response, poll=poll)
 
         raw_users = response.get("users", [])
@@ -191,8 +194,7 @@ class PollClient:
             PollcordError: On any other API error.
         """
         url = (
-            f"{self.BASE_URL}/channels/{poll.channel_id}"
-            f"/polls/{poll.message_id}/expire"
+            f"{self.BASE_URL}/channels/{poll.channel_id}/polls/{poll.message_id}/expire"
         )
         self.logger.debug(f"Ending poll {poll.message_id} via API")
 
@@ -247,9 +249,7 @@ class PollClient:
         self.logger.info(f"{method} {url}")
 
         for attempt in range(max_retries):
-            async with self.session.request(
-                method, url, json=payload
-            ) as response:
+            async with self.session.request(method, url, json=payload) as response:
                 if response.status == 429:
                     data = await response.json()
                     wait_time = data.get("retry_after", 1.0)

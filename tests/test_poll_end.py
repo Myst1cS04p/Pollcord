@@ -108,6 +108,7 @@ async def test_end_twice_fires_callback_once():
 @pytest.mark.asyncio
 async def test_callback_exception_does_not_crash_poll():
     """An exception raised inside on_end should not propagate or leave poll in a bad state."""
+
     async def bad_callback(poll):
         raise ValueError("Intentional error in callback")
 
