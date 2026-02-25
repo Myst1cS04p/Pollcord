@@ -63,10 +63,6 @@ async def test_rate_limit_exhausts_retries(poll):
 @pytest.mark.asyncio
 async def test_get_vote_users_fetches_concurrently(poll):
     """get_vote_users should fire all option requests concurrently via gather."""
-    base = (
-        f"https://discord.com/api/v10/channels/{poll.channel_id}"
-        f"/polls/{poll.message_id}"
-    )
 
     call_order = []
 

@@ -1,4 +1,3 @@
-import pytest
 from Pollcord.voter import Voter
 
 

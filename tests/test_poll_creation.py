@@ -72,11 +72,11 @@ async def test_create_poll_schedules_expiry():
 
         async with PollClient(token="fake_token") as client:
             with patch.object(Poll, "start") as mock_start:
-                poll = await client.create_poll(
+                await client.create_poll(
                     channel_id=channel_id,
                     question="Test?",
                     options=["Yes", "No"],
-                )
+            )
                 mock_start.assert_called_once()
 
 
