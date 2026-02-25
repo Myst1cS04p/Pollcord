@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from aioresponses import aioresponses
 from Pollcord import PollClient, Poll
 from Pollcord.error import PollCreationError
