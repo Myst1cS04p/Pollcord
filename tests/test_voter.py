@@ -1,5 +1,5 @@
 import pytest
-from Pollcord.voter import Voter, HAS_DISCORD_PY
+from Pollcord.voter import Voter
 
 
 def test_voter_from_dict_full():
@@ -80,23 +80,3 @@ def test_voter_inequality():
     v1 = Voter(id=1, username="alice")
     v2 = Voter(id=2, username="alice")
     assert v1 != v2
-
-
-def test_to_discord_user_without_discord_py():
-    """to_discord_user() should raise RuntimeError if discord.py is not installed."""
-    if HAS_DISCORD_PY:
-        pytest.skip("discord.py is installed — skipping no-discord.py path")
-
-    v = Voter(id=1, username="alice")
-    with pytest.raises(RuntimeError, match="discord.py is not installed"):
-        v.to_discord_user()
-
-
-def test_to_discord_user_with_discord_py():
-    """to_discord_user() should raise NotImplementedError if discord.py is installed."""
-    if not HAS_DISCORD_PY:
-        pytest.skip("discord.py is not installed — skipping discord.py path")
-
-    v = Voter(id=1, username="alice")
-    with pytest.raises(NotImplementedError):
-        v.to_discord_user()

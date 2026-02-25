@@ -274,6 +274,6 @@ class PollClient:
     @staticmethod
     def _format_options(options: List[str]) -> List[dict]:
         return [
-            {"answer_id": i + 1, "poll_media": {"text": str(opt)}}
+            {"answer_id": str(i + 1), "poll_media": {"text": str(opt)}}
             for i, opt in enumerate(options)
         ]
